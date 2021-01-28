@@ -55,8 +55,11 @@
     <Analyzer Include="C:\Program Files (x86)\Microsoft Visual Studio Tools for Unity\16.0\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\PlayerMovement.cs" />
-    <Compile Include="Assets\Scripts\PlayerAbilities.cs" />
+    <Compile Include="Assets\Scripts\Player\PlayerMovement.cs" />
+    <Compile Include="Assets\Scripts\Player\PlayerTransform.cs" />
+    <Compile Include="Assets\Scripts\Player\PlayerAbilities.cs" />
+    <Compile Include="Assets\Scripts\MovablePlatform.cs" />
+    <Compile Include="Assets\Soul.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

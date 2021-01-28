@@ -7,6 +7,9 @@ TagManager:
   - Platform
   - Breakable Platform
   - Interactable
+  - Movable Platform
+  - Lost Soul
+  - Sign
   layers:
   - Default
   - TransparentFX
