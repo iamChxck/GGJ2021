@@ -7,8 +7,9 @@ public class PlayerMovement : MonoBehaviour
 {
     public float jumpForce = 200f;
     public float moveSpeed = 5.0f;
-    public float fallMultiplier = 2.5f;
-    public float lowJumpMultiplier = 2f;
+    public Transform groundCheck;
+    public float checkRadius;
+    public LayerMask whatIsGround;
 
     private Rigidbody2D _rigidbody2D;
 
@@ -16,13 +17,16 @@ public class PlayerMovement : MonoBehaviour
 
     private float horizontalMovement;
 
-    private bool canJump;
-    private bool isRunning;
+    [SerializeField] private bool canJump;
+    [SerializeField] public bool doubleJump;
+    [SerializeField] private bool isRunning;
+
+    [SerializeField] private bool isGrounded;
 
     public bool isFacingRight;
+    private int extraJumps;
 
-
-
+    public int extraJumpsValue;
 
     private GameObject playerLives;
 
@@ -32,10 +36,13 @@ public class PlayerMovement : MonoBehaviour
 
     protected float minX, maxX, minY, maxY;
 
+    private void Start()
+    {
+        extraJumps = extraJumpsValue;
+    }
     private void Awake()
     {
         _rigidbody2D = GetComponent<Rigidbody2D>();
-        canJump = true;
         playerStartPos = transform.position;
         isFacingRight = true;
         isRunning = false;
@@ -43,42 +50,36 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-            _rigidbody2D.gravityScale = 1;
+
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, whatIsGround);
+
+        
             // For Movement
-            horizontalMovement = Input.GetAxis("Horizontal") * moveSpeed;
+        horizontalMovement = Input.GetAxis("Horizontal") * moveSpeed;
 
-            _rigidbody2D.velocity = new Vector2(horizontalMovement, _rigidbody2D.velocity.y);
+        _rigidbody2D.velocity = new Vector2(horizontalMovement, _rigidbody2D.velocity.y);
 
-            // For jumping
-            if (Input.GetKey(KeyCode.Space))
-            {
-                if (canJump == true)
-                {
-                    _rigidbody2D.AddForce(new Vector2(0, jumpForce));
-                    canJump = false;
-                    isRunning = true;
-                }
-            }
-
-            // For a better jumping
-            if (_rigidbody2D.velocity.y < 0)
-            {
-                // fallMultiplier - 1 because unity is already applying 1 multiple of the gravity so we just need 1.5 more to this
-                // Why not just set it to 2.5?
-                // So that we don't get confused while editing in the inspector
-                _rigidbody2D.velocity += Vector2.up * Physics2D.gravity * (fallMultiplier - 1) * Time.deltaTime;
-            }
-            // This is for when the player chooses not to hold the jump button therefore having better control of jumping
-            else if (_rigidbody2D.velocity.y > 0 && !Input.GetKey(KeyCode.Space))
-            {
-                _rigidbody2D.velocity += Vector2.up * Physics2D.gravity * (lowJumpMultiplier - 1) * Time.deltaTime;
-            }
-        }
+       
+    }
     
 
 
     private void Update()
     {
+        if (extraJumps == 0)
+        {
+            doubleJump = true;
+        }
+        if (isGrounded)
+        {
+            extraJumps = extraJumpsValue;
+            doubleJump = false;
+        }
+
+       
+        Jump();
+
+
         animator.SetBool("isRunning", isRunning);
 
         if (_rigidbody2D.velocity.x > 0)
@@ -104,18 +105,31 @@ public class PlayerMovement : MonoBehaviour
             isRunning = false;
         }
         RestrictMovement();
+
+      
+
     }
 
     private void OnCollisionEnter2D(Collision2D col)
     {
         // Check if the player is back on the ground
-        if (col.gameObject.tag == "Platform")
-        {
-            canJump = true;
-        }
+       
     }
 
   
+    public void Jump()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && extraJumps > 0)
+        {
+            Debug.Log("PRESSING SPACE");
+            _rigidbody2D.velocity = Vector2.up * jumpForce;
+            extraJumps--;
+        }
+        else if (Input.GetKeyDown(KeyCode.Space) && extraJumps == 0 && isGrounded)
+        {
+            _rigidbody2D.velocity = Vector2.up * jumpForce;
+        }
+    }
     public virtual void RestrictMovement()
     {
         Vector3 upperRightCorner = Camera.main.ViewportToWorldPoint(new
