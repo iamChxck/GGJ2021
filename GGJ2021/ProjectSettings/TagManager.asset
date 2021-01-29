@@ -6,10 +6,10 @@ TagManager:
   tags:
   - Platform
   - Breakable Platform
-  - Interactable
   - Movable Platform
   - Lost Soul
   - Sign
+  - Interactable
   layers:
   - Default
   - TransparentFX
