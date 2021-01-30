@@ -110,6 +110,8 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
+
+
     private void OnCollisionEnter2D(Collision2D col)
     {
         // Check if the player is back on the ground

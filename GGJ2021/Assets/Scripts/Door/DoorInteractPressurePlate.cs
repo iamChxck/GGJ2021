@@ -31,6 +31,13 @@ public class DoorInteractPressurePlate : MonoBehaviour
         {
            // Debug.Log("Door opened!");
             door.OpenDoor();
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.name == "Small Circle")
+        {
             timer = 1f;
         }
     }

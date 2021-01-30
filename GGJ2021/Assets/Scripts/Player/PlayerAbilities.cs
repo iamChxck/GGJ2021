@@ -44,8 +44,12 @@ public class PlayerAbilities : MonoBehaviour
     void Update()
     {
         
-        FollowPlayer();   
-        CurrentForm();
+        //FollowPlayer();
+       if(morphedObject != null)
+        {
+            CurrentForm();
+        }
+     
 
         if (player.doubleJump == true)
         {
@@ -117,7 +121,8 @@ public class PlayerAbilities : MonoBehaviour
         if (collision.gameObject.CompareTag("Lost Soul"))
         {
             soul = collision.gameObject.GetComponent<Soul>();
-            Debug.Log("Lost Soul within range!");
+            //Debug.Log("Lost Soul within range!");
+            FollowPlayer();
             soul.withinRange = true;
         }
 
@@ -131,10 +136,19 @@ public class PlayerAbilities : MonoBehaviour
                 Destroy(heldSouls[i]);
             }
             soulsHeld = 0;
-            Debug.Log("Souls Returned!");
+           // Debug.Log("Souls Returned!");
            
         }
     }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if(collision.gameObject.tag == "Lost Soul")
+        {
+            FollowPlayer();
+        }
+    }
+
     private void OnTriggerExit2D(Collider2D collision)
     {
         soul.withinRange = false;
@@ -145,6 +159,8 @@ public class PlayerAbilities : MonoBehaviour
         
         
     }
+
+    
 
 
     private void OnCollisionExit2D(Collision2D collision)
